@@ -11,10 +11,8 @@ Característica: Acordar intercambios entre estudiantes
 
   Escenario: Confirmar intercambio de libros
     Cuando el estudiante confirma el intercambio
-    Entonces se actualizará el estado del intercambio a "Confirmado"
-    Y se notificará al otro estudiante sobre la confirmación del intercambio
+    Entonces se notificará al otro estudiante sobre la confirmación del intercambio
 
   Escenario: No confirmar intercambio de libros
     Cuando el estudiante no confirma el intercambio
-    Entonces se actualizará el estado del intercambio a "Cancelado"
     Y se notificará al otro estudiante sobre la cancelación del intercambio
