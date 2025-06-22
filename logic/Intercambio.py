@@ -1,5 +1,7 @@
 from logic import Estado
 from datetime import datetime, timedelta
+
+
 class Intercambio:
     def __init__(self):
         self.estado = None
@@ -26,3 +28,30 @@ class Intercambio:
             self.estado = Estado.Estado.CONFIRMADO
         else:
             raise ValueError("El intercambio no está en estado pendiente para confirmar.")
+
+
+    def verificar_confirmacion_intercambio(self):
+        if self.estado == Estado.Estado.PENDIENTE:
+            fecha_actual = datetime.now()
+            fecha_intercambio = datetime.strptime(self.fecha, "%Y-%m-%d %H:%M:%S")
+
+            if fecha_actual > fecha_intercambio:
+                estudiante1 = self.libro1.obtener_estudiante()
+                estudiante2 = self.libro2.obtener_estudiante()
+
+                if not estudiante1.confirmo_intercambio() or not estudiante2.confirmo_intercambio():
+                    self.estado = Estado.Estado.CANCELADO
+                else:
+                    self.estado = Estado.Estado.CONFIRMADO
+
+        return self.estado
+
+    def obtener_estado(self):
+        return self.estado
+
+    def actualizar_estado_si_todos_confirmaron(self):
+        estudiantes = self.obtener_estudiantes_involucrados()
+        if all(estudiante.confirmo_intercambio() for estudiante in estudiantes):
+            self.estado = Estado.Estado.CONFIRMADO
+        else:
+            self.estado = Estado.Estado.PENDIENTE

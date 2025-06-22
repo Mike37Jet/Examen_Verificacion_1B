@@ -49,7 +49,7 @@ def step_impl(context):
     intercambio = context.intercambio
 
     notificacion = Notificacion()
-    notificacion.enviar_recordatorio(intercambio.obtener_estudiantes_involucrados(),)
+    notificacion.enviar_recordatorio_de_intercambio(intercambio.obtener_estudiantes_involucrados(), intercambio)
     estudiantes = intercambio.obtener_estudiantes_involucrados()
 
     for estudiante in estudiantes:

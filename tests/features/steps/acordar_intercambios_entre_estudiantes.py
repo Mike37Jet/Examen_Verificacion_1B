@@ -45,8 +45,10 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     intercambio = context.intercambio
-
-    intercambio.confirmar_intercambio()
+    estudiante = intercambio.obtener_estudiantes_involucrados()[0]
+    estudiante2 = intercambio.obtener_estudiantes_involucrados()[1]
+    estudiante.confirmar_intercambio(intercambio)
+    estudiante2.confirmar_intercambio(intercambio)
 
     assert intercambio.estado == Estado.CONFIRMADO
 
@@ -73,20 +75,21 @@ def step_impl(context):
     :type context: behave.runner.Context
     """
     intercambio = context.intercambio
+    estudiante = intercambio.obtener_estudiantes_involucrados()[0]
+    estudiante.confirmar_intercambio(intercambio)
 
-    # Verificar que el intercambio sigue en estado pendiente
     assert intercambio.estado == Estado.PENDIENTE
 
     # Simular que ha pasado el tiempo y la fecha de intercambio ya ocurrió
     fecha_pasada = (datetime.now() - timedelta(hours=1)).strftime("%Y-%m-%d %H:%M:%S")
     intercambio.fecha = fecha_pasada
 
-    # Verificar que la fecha restante es negativa (ya pasó la fecha)
-    fecha_restante = intercambio.calcular_fecha_restante()
-    assert fecha_restante < 0
+    intercambio.verificar_confirmacion_intercambio()
+    estado = intercambio.obtener_estado()
 
-    # Opcionalmente, cambiar el estado a cancelado automáticamente
-    intercambio.estado = Estado.CANCELADO
+    context.intercambio = intercambio
+
+    assert estado == Estado.CANCELADO
 
 
 
@@ -99,9 +102,10 @@ def step_impl(context):
     intercambio = context.intercambio
 
     notificacion = Notificacion()
-    notificacion.enviar_cancelacion(intercambio.obtener_estudiantes_involucrados())
+    notificacion.enviar_cancelacion(intercambio.obtener_estudiantes_involucrados(), intercambio)
 
     estudiantes = intercambio.obtener_estudiantes_involucrados()
 
     for estudiante in estudiantes:
         assert len(estudiante.notificaciones) > 0
+
